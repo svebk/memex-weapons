@@ -1,0 +1,6 @@
+[submodule "py-faster-rcnn"]
+	path = py-faster-rcnn
+	url = https://github.com/rbgirshick/py-faster-rcnn
+[submodule "extraction"]
+	path = extraction
+	url = https://github.com/inferlink/extraction.git
