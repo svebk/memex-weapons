@@ -17,7 +17,7 @@ class CaffeExtractorConf():
     PRETRAINED = './deepmodels/CNN_20K.caffemodel'
     MEAN_FILE = './deepmodels/imagenet_mean.npy'
     CAT_FILE = './deepmodels/cat_20K.txt'
-    WEAPONS_CAT_FILE = './deepmodels/weapon_classes.npy"
+    WEAPONS_CAT_FILE = './deepmodels/weapon_classes.npy'
     WITH_FLIP = True
     WITH_CROP = False
     OUTPUT_LAYERS=['prob']
