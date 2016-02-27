@@ -97,7 +97,7 @@ class CaffeExtractor():
 
 
 ce = CaffeExtractor()
-IMAGE_FILE = '/media/04/MEMEX/memex-weapons/deepmodels/resized/04_Marlin_Modelo_1894.jpg'
+IMAGE_FILE = './deepmodels/04_Marlin_Modelo_1894.jpg'
 out = ce.getOutput(IMAGE_FILE)
 ce.show_res_batch()
 
