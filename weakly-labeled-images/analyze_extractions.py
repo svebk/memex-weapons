@@ -43,18 +43,21 @@ for i in range(len(all_extr)):
     imgs_paths=[all_extr[i][extrk]['original_doc']['outpaths'][pos[0]] for pos in all_images[i]]
     all_infos.append((extrk,one_cat,imgs,imgs_paths,title,price,condition,brand,caliber))
 
-all_infos_shotguns=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Shotguns")]
-all_infos_rifles=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Rifles")]
-all_infos_pistols=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Pistols")]
-# Machine guns seem to be listed within the Rifles category.
 atf_kw=json.load(open("atf_keywords.json","r"))
 gunsamerica_cat_mapping=json.load(open("gunsamerica_memex_mapping.json","r"))
+
+all_infos_shotgun=[x for x in all_infos for cat_ok in gunsamerica_cat_mapping['Shotgun']  if len(x[1])>0 and x[1][0].startswith(cat_ok)]
+all_infos_rifle_init=[x for x in all_infos for cat_ok in gunsamerica_cat_mapping['Rifle']  if len(x[1])>0 and x[1][0].startswith(cat_ok)]
+all_infos_handgun=[x for x in all_infos for cat_ok in gunsamerica_cat_mapping['Handgun'] if len(x[1])>0 and x[1][0].startswith(cat_ok)]
 all_infos_ammo=[x for x in all_infos for cat_ok in gunsamerica_cat_mapping['Ammo'] if len(x[1])>0 and x[1][0].startswith(cat_ok)]
+# Machine guns seem to be listed within the Rifles category.
 all_infos_machine_gun=[x for x in all_infos for kw in atf_kw['Machine Gun'] if len(x[1])>0 and x[1][0].startswith("Guns > Rifles") and kw.lower() in x[4].lower()]
+# exclude machine guns from rifles
+all_infos_rifle=[item for item in all_infos_rifle_init if item not in all_infos_machine_gun]
 #Silencer
 all_infos_silencer=[x for x in all_infos for kw in atf_kw['Silencer'] if len(x[1])>0 and kw.lower() in x[4].lower()]
 # Conversion Devices/Parts
-all_infos_conversion=[x for x in all_infos for kw in atf_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw.lower() in x[4].lower()]]
-
-#all_infos_conversion_v2=[filter(lambda x:re.match("^"+y+"+$",z),[z for z in set(re.split("[\s:/,.:]",x[4])) for x in all_infos for y in atf_kw['Conversion Devices/Parts']])]
-#TODO, analyze titles, brands, caliber, conditions.
+all_infos_conversion=[x for x in all_infos for kw in atf_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw.lower() in x[4].lower()]
+# Frame receiver?
+all_infos_frame=[x for x in all_infos for kw in atf_kw['Frame / Lower Receiver'] if len(x[1])>0 and kw.lower() in x[4].lower()]
+# Explosive Ordinance?

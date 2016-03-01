@@ -1,0 +1,23 @@
+{
+"Handgun": ["automatic pistol, automatic","pistol, handgun, side arm, shooting iron","twenty-two pistol","blunderbuss","Colt","derringer","forty-five","gas gun","gat, rod","Luger","revolver, six-gun, six-shooter","Saturday night special","semiautomatic firearm","semiautomatic pistol, semiautomatic","Very pistol, Verey pistol","zip gun"],
+"Shotgun": ["sawed-off shotgun","shotgun, scattergun"],
+"Rifle": ["assault rifle, assault gun","bayonet","carbine","Dragunov","fusil","Garand rifle, Garand, M-1, M-1 rifle","Mauser","rifle","sniper rifle, precision rifle","twenty-two rifle","Winchester"],
+"Machine Gun": ["Bren, Bren gun","Browning automatic rifle, BAR","Browning machine gun, Peacemaker","Gatling gun","Kalashnikov","light machine gun","machine gun","Maxim gun","Spandau","Sten gun", "burp gun, machine pistol","submachine gun","Tommy gun, Thompson submachine gun","Uzi"],
+"Frame / Lower Receiver": "",
+"Conversion Parts / Kits": "",
+"Silencer / Silencer Parts": "",
+"Ammo": ["bullet, slug","dumdum, dumdum bullet","full metal jacket","rifle ball"],
+"Explosive Ordinance": ["grenade","hand grenade","claymore mine, claymore","explosive device","improvised explosive device, I.E.D., IED","land mine, ground-emplaced mine, booby trap","mine","Molotov cocktail, petrol bomb, gasoline bomb","rifle grenade","pipe bomb"],
+"Other / Bacteriological": ["Bacillus anthracis, anthrax bacillus","clostridium perfringens","aflatoxin"],
+"Other / Traditional,manual armaments": ["pike","arquebus, harquebus, hackbut, hagbut","arrow","assegai, assagai","backsword","banderilla","bow","bow and arrow","boomerang, throwing stick, throw stick","brass knucks, knucks, brass knuckles, knuckles, knuckle duster","broad arrow","broadsword","butt shaft","cavalry sword, saber, sabre","claymore","crossbow","cutlas, cutlass","dagger, sticker","dart","dirk","epee","falchion","fencing sword","foil","halberd","handbow","javelin","khukuri","kirpan","knife","kris, creese, crease","longbow","machete, matchet, panga","poniard, bodkin","rapier, tuck","saber, sabre","scimitar","shiv","spear, lance, shaft","culverin","sling","stiletto","sword, blade, brand, steel","tomahawk, hatchet","trench knife","trident","yataghan","slasher"],
+"Other / Airsoft,Paintball": ["air gun, airgun, air rifle","BB gun","paintball gun"],
+"Other / Missile": ["air-to-air missile","air-to-ground missile, air-to-surface missile","antiballistic missile, ABM","ballistic missile","cruise missile","Exocet","guided missile","heat-seeking missile","intercontinental ballistic missile, ICBM","MANPAD","missile","surface-to-air missile, SAM","Minuteman","projectile, missile","seeker","sidewinder","Stinger","torpedo"],
+"Other / Canon": ["antiaircraft, antiaircraft gun, flak, flack, pom-pom, ack-ack, ack-ack gun","Bofors gun","cannon","cannonball, cannon ball, round shot"],
+"Other / Bombs": ["atom bomb, atomic bomb, A-bomb, fission bomb, plutonium bomb","Big Blue, BLU-82","bomb","bomblet, cluster bomblet","bombshell","buzz bomb, robot bomb, flying bomb, doodlebug, V-1","car bomb","cluster bomb","dirty bomb","dumb bomb, gravity bomb","fragmentation bomb, antipersonnel bomb, anti-personnel bomb, daisy cutter","general-purpose bomb, GP bomb","hydrogen bomb, H-bomb, fusion bomb, thermonuclear bomb","balloon bomb, Fugo","incendiary bomb, incendiary, firebomb","laser-guided bomb, LGB","neutron bomb","nuclear weapon, atomic weapon","penetration bomb","smart bomb","high explosive"],
+"Other / Old guns": ["blunderbuss","bayonet","breechloader","flintlock, firelock","fowling piece","horse pistol, horse-pistol","matchlock","musket","musket ball, ball","muzzle loader","percussion cap","repeating firearm, repeater","smoothbore"],
+"Other / Self-defense": ["stun gun, stun baton","pepper spray"],
+"Other / Others": ["flamethrower", "set gun, spring gun","smoke bomb, smoke grenade","stink bomb, stench bomb","whaling gun","Greek fire"],
+"Other / Riot control": ["tear gas, teargas, lacrimator, lachrymator", "riot gun"]
+}
+
+ 
