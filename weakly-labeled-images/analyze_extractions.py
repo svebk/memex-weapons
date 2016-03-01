@@ -46,3 +46,6 @@ all_infos_rifles=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Gu
 all_infos_pistols=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Pistols")]
 
 #TODO, analyze titles, brands, caliber, conditions.
+# Machine guns seem to be listed within the Rifles category.
+
+atf_kw=json.load(open("atf_keywords.json","r"))
