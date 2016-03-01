@@ -48,13 +48,13 @@ all_infos_rifles=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Gu
 all_infos_pistols=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Pistols")]
 # Machine guns seem to be listed within the Rifles category.
 atf_kw=json.load(open("atf_keywords.json","r"))
-all_infos_machine_gun=[x for x in all_infos for kw in atf_kw['Machine Gun'] if len(x[1])>0 and x[1][0].startswith("Guns > Rifles") and kw in x[4]]
+gunsamerica_cat_mapping=json.load(open("gunsamerica_memex_mapping.json","r"))
+all_infos_ammo=[x for x in all_infos for cat_ok in gunsamerica_cat_mapping['Ammo'] if len(x[1])>0 and x[1][0].startswith(cat_ok)]
+all_infos_machine_gun=[x for x in all_infos for kw in atf_kw['Machine Gun'] if len(x[1])>0 and x[1][0].startswith("Guns > Rifles") and kw.lower() in x[4].lower()]
 #Silencer
-all_infos_silencer=[x for x in all_infos for kw in atf_kw['Silencer'] if len(x[1])>0 and kw in x[4]]
+all_infos_silencer=[x for x in all_infos for kw in atf_kw['Silencer'] if len(x[1])>0 and kw.lower() in x[4].lower()]
 # Conversion Devices/Parts
-all_infos_conversion=[x for x in all_infos for kw in atf_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw in x[4]]
-all_infos_conversion_v2=[x for x in all_infos for kw in atf_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw.lower() in x[4].lower()]]
+all_infos_conversion=[x for x in all_infos for kw in atf_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw.lower() in x[4].lower()]]
 
-split_titles=[x[4].lower().split(' ') for x in all_infos if len(x[1])>0]
 #all_infos_conversion_v2=[filter(lambda x:re.match("^"+y+"+$",z),[z for z in set(re.split("[\s:/,.:]",x[4])) for x in all_infos for y in atf_kw['Conversion Devices/Parts']])]
 #TODO, analyze titles, brands, caliber, conditions.
