@@ -1,4 +1,5 @@
 import json
+import re
 all_extr=json.load(open("guns_america_extractions2.json","r"))
 
 # all_images=[]
@@ -32,6 +33,7 @@ for i in range(len(all_extr)):
     extrk=all_extr[i].keys()[0]
     one_cat=all_extr[i][extrk]['extractions']['category']
     title=all_extr[i][extrk]['extractions']['title']
+    # Beware, some price might be auctions prices (e.g. down to 0$...)
     price=all_extr[i][extrk]['extractions']['current_price']
     condition=[all_extr[i][extrk]['extractions']['details'][ii]['value'] for ii in range(len(all_extr[i][extrk]['extractions']['details'])) if all_extr[i][extrk]['extractions']['details'][ii]['label']=='Condition']
     brand=[all_extr[i][extrk]['extractions']['details'][ii]['value'] for ii in range(len(all_extr[i][extrk]['extractions']['details'])) if all_extr[i][extrk]['extractions']['details'][ii]['label']=='Brand']
@@ -44,8 +46,15 @@ for i in range(len(all_extr)):
 all_infos_shotguns=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Shotguns")]
 all_infos_rifles=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Rifles")]
 all_infos_pistols=[x for x in all_infos if len(x[1])>0 and x[1][0].startswith("Guns > Pistols")]
-
-#TODO, analyze titles, brands, caliber, conditions.
 # Machine guns seem to be listed within the Rifles category.
-
 atf_kw=json.load(open("atf_keywords.json","r"))
+all_infos_machine_gun=[x for x in all_infos for kw in atf_kw['Machine Gun'] if len(x[1])>0 and x[1][0].startswith("Guns > Rifles") and kw in x[4]]
+#Silencer
+all_infos_silencer=[x for x in all_infos for kw in atf_kw['Silencer'] if len(x[1])>0 and kw in x[4]]
+# Conversion Devices/Parts
+all_infos_conversion=[x for x in all_infos for kw in atf_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw in x[4]]
+all_infos_conversion_v2=[x for x in all_infos for kw in atf_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw.lower() in x[4].lower()]]
+
+split_titles=[x[4].lower().split(' ') for x in all_infos if len(x[1])>0]
+#all_infos_conversion_v2=[filter(lambda x:re.match("^"+y+"+$",z),[z for z in set(re.split("[\s:/,.:]",x[4])) for x in all_infos for y in atf_kw['Conversion Devices/Parts']])]
+#TODO, analyze titles, brands, caliber, conditions.
