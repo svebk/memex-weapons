@@ -2,10 +2,10 @@
 "Handgun": ["Guns > Pistols"],
 "Shotgun": ["Guns > Shotguns"],
 "Rifle": ["Guns > Rifles"],
-"Machine Gun": "",
+"Machine Gun": ["Guns > Rifles"],
 "Frame / Lower Receiver": "",
 "Conversion Parts / Kits": "",
 "Silencer / Silencer Parts": "",
 "Ammo": ["Non-Guns > Reloading", "Non-Guns > Ammunition"],
-"Explosive Ordinance": ""
+"Explosive Ordnance": ""
 }
