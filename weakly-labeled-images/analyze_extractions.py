@@ -38,4 +38,4 @@ all_infos_conversion=[x for x in all_infos for kw in inc_kw['Conversion Devices/
 # beware that some ads may be kits WITHOUT frame...
 all_infos_frame=[x for x in all_infos for kw in inc_kw['Frame / Lower Receiver'] if len(x[1])>0 and kw.lower() in x[4].lower() and [exc_cat.lower() not in x[1][0].lower() for exc_cat in gunsamerica_cat_exc['Frame / Lower Receiver']].count(True)==len(gunsamerica_cat_exc['Frame / Lower Receiver'])]
 # Explosive Ordnance?
-all_infos_explosive=[x for x in all_infos for kw in inc_kw['Explosive Ordnance'] if len(x[1])>0 and kw.lower() in x[4].lower() and [exc_cat.lower() not in x[1][0].lower() for exc_cat in gunsamerica_cat_exc['Frame / Lower Receiver']].count(True)==len(gunsamerica_cat_exc['Frame / Lower Receiver'])]
+all_infos_explosive=[x for x in all_infos for kw in inc_kw['Explosive Ordnance'] if len(x[1])>0 and kw.lower() in x[4].lower() and [exc_cat.lower() not in x[1][0].lower() for exc_cat in gunsamerica_cat_exc['Explosive Ordnance']].count(True)==len(gunsamerica_cat_exc['Explosive Ordnance'])]
