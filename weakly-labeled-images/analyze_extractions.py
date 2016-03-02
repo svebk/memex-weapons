@@ -28,6 +28,7 @@ all_infos_ammo=[x for x in all_infos for cat_ok in gunsamerica_cat_inc['Ammo'] i
 # Machine guns seem to be listed within the Rifles category.
 all_infos_machine_gun=[x for x in all_infos for kw in inc_kw['Machine Gun'] if len(x[1])>0 and x[1][0].startswith("Guns > Rifles") and kw.lower() in x[4].lower()]
 # exclude machine guns from rifles
+# Why is len(all_infos_rifle_init)-len(all_infos_machine_gun) != len(all_infos_rifle)
 all_infos_rifle=[item for item in all_infos_rifle_init if item not in all_infos_machine_gun]
 #Silencer
 all_infos_silencer=[x for x in all_infos for kw in inc_kw['Silencer'] if len(x[1])>0 and kw.lower() in x[4].lower()]
@@ -35,6 +36,6 @@ all_infos_silencer=[x for x in all_infos for kw in inc_kw['Silencer'] if len(x[1
 all_infos_conversion=[x for x in all_infos for kw in inc_kw['Conversion Devices/Parts'] if len(x[1])>0 and kw.lower() in x[4].lower()]
 # Frame receiver?
 # beware that some ads may be kits WITHOUT frame...
-all_infos_frame=[x for x in all_infos for kw in inc_kw['Frame / Lower Receiver'] for exc_cat in gunsamerica_cat_exc['Frame / Lower Receiver'] if len(x[1])>0 and kw.lower() in x[4].lower() and exc_cat not in x[1][0].lower()]
+all_infos_frame=[x for x in all_infos for kw in inc_kw['Frame / Lower Receiver'] if len(x[1])>0 and kw.lower() in x[4].lower() and [exc_cat.lower() not in x[1][0].lower() for exc_cat in gunsamerica_cat_exc['Frame / Lower Receiver']].count(True)==len(gunsamerica_cat_exc['Frame / Lower Receiver'])]
 # Explosive Ordnance?
-all_infos_explosive=[x for x in all_infos for kw in inc_kw['Explosive Ordnance'] for exc_cat in gunsamerica_cat_exc['Explosive Ordnance'] if len(x[1])>0 and kw.lower() in x[4].lower() and exc_cat not in x[1][0].lower()]
+all_infos_explosive=[x for x in all_infos for kw in inc_kw['Explosive Ordnance'] if len(x[1])>0 and kw.lower() in x[4].lower() and [exc_cat.lower() not in x[1][0].lower() for exc_cat in gunsamerica_cat_exc['Frame / Lower Receiver']].count(True)==len(gunsamerica_cat_exc['Frame / Lower Receiver'])]
