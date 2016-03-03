@@ -97,8 +97,10 @@ class CaffeExtractor():
             for key in self.map_cat_lists:
                 self.map_cat_pos[key]=[]
                 for cat in json_map[key]:
-                    self.map_cat_pos[key].extend(np.where(self.np_cat==cat))
-                    self.all_mapped_cat.extend(np.where(self.np_cat==cat))
+                    self.map_cat_pos[key].extend(list(np.where(self.np_cat==cat)[0]))
+                    self.all_mapped_cat.extend(list(np.where(self.np_cat==cat)[0]))
+		self.map_cat_pos[key]=np.asarray(self.map_cat_pos[key]).squeeze()
+	self.nonweapons_pos=[i for i in range(self.np_cat.shape[0]) if i not in self.all_mapped_cat]
 
     def show_res_batch(self):     
 	batch_in = self.input_data.shape[0]
@@ -106,10 +108,14 @@ class CaffeExtractor():
         for i in range(batch_in):
             print "Input #"+str(i)+" classified as:",self.np_cat[prediction[i].argmax()] 
             ind=np.argsort(prediction[i])[::-1]
-            print "Top 10 classes are:",self.np_cat[ind[0:10]]	
+            print "Top 10 classes are:",self.np_cat[ind[0:10]]
+	    print "Weapon probability: {}".format(np.sum(prediction[i][self.all_mapped_cat]))
+	    print "Non-weapon probability: {}".format(np.sum(prediction[i][self.nonweapons_pos]))	
 	    mlw=self.wf[np.argmax(prediction[i][self.wf])]
 	    print "Most likely weapon is:",self.np_cat[mlw].strip()
-
+	    for key in self.map_cat_lists:
+		if not key.startswith("Other") and self.map_cat_pos[key].shape[0]>0:
+			print "{} probability: {}".format(key,np.sum(prediction[i][self.map_cat_pos[key]]))
 
 
 ce = CaffeExtractor()
