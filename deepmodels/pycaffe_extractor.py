@@ -84,7 +84,7 @@ class CaffeExtractor():
         cat_lists=[]
         with open(CAT_FILE,"rt") as fcat:
             for line in fcat:
-                cat_lists.append(line)
+                cat_lists.append(line.strip())
 	print "We have",str(len(cat_lists)),"classes in total."
 	return np.asarray(cat_lists)
 
