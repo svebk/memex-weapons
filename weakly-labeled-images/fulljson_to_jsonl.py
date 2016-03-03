@@ -3,8 +3,8 @@ import json
 basepath="/srv/skaraman/weapons/"
 website="gunsamerica"
 
-f=open("{}{}/extr_{}_ads.jsonl","r")
-fout=open("{}{}/extr_{}_ads_real.jsonl","w")
+f=open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r")
+fout=open("{}{}/extr_{}_ads_real.jsonl".format(basepath,website,website),"w")
 fulljson=json.load(f)
 # fulljson is a list
 for doc in range(len(fulljson)):
@@ -16,4 +16,5 @@ for doc in range(len(fulljson)):
 	for keepkey in ['raw_html', 'dlimagecat_url', 'original_doc']:
 		new_doc[k][keepkey]=old_doc[k][keepkey]
 	fout.write(json.dumps(new_doc))
+	fout.write("\n") 
 fout.close()

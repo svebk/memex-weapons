@@ -4,12 +4,10 @@ basepath="/srv/skaraman/weapons/"
 website="gunsamerica"
 
 #all_extr=json.load(open("guns_america_extractions2.json","r"))
-#all_extr=json.load(open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r"))
+all_extr=json.load(open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r"))
 
 all_infos=[]
-extr_file=open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r")
-for line in extr_file:
-    one_extr=json.loads(line)
+for i in range(len(all_extr)):
     extrk=all_extr[i].keys()[0]
     one_cat=all_extr[i][extrk]['extractions']['category']
     title=all_extr[i][extrk]['extractions']['title']
