@@ -1,16 +1,13 @@
-# Cannot reproduce results from  feature_extract-memex.bin with this script for now...
-
 import numpy as np
 import matplotlib.pyplot as plt
-
+import json
+import cv2
+import scipy
 # Make sure that caffe is on the python path:
 #caffe_root = '../'  # this file is expected to be in {caffe_root}/examples
 #import sys
 #sys.path.insert(0, caffe_root + 'python')
-
 import caffe
-import cv2
-import scipy
 
 class CaffeExtractorConf():
     MODEL_FILE = './deepmodels/CNN_20K_deploy.prototxt'
@@ -34,22 +31,25 @@ class CaffeExtractor():
 	self.initialize()
 
     def initialize(self):
+	self.np_cat = self.loadCatList(self.conf.CAT_FILE)
+	self.wf=np.where(np.load(self.conf.WEAPONS_CAT_FILE)==1)[0]
+        self.mapCatList()
+	# Caffe net init
         if self.conf.CAFFE_MODE == "GPU":
               caffe.set_mode_gpu()
         else:
 	      caffe.set_mode_cpu()
-	self.net = caffe.Net(self.conf.MODEL_FILE, self.conf.PRETRAINED, caffe.TEST)
 	self.mean_img = np.load(self.conf.MEAN_FILE)
-	self.np_cat = self.loadCatList(self.conf.CAT_FILE)
+	self.net = caffe.Net(self.conf.MODEL_FILE, self.conf.PRETRAINED, caffe.TEST)
 	self.conf.batch_size = self.net.blobs['data'].data.shape[0]
 	self.conf.IN_DIM = (self.net.blobs['data'].data.shape[2],self.net.blobs['data'].data.shape[3])
-	self.wf=np.where(np.load(self.conf.WEAPONS_CAT_FILE)==1)[0]
-    sefl.mapCatList()
 
     def formatInput(self,IMAGE_FILE):
 	start=(256-224)/2
 	end=start+224
         input_image = cv2.imread(IMAGE_FILE)
+	if input_image is None:
+		return None
         input_image_t=np.transpose(input_image,(2,0,1))
         if self.conf.WITH_FLIP:
             input_image_fl = np.fliplr(input_image)
@@ -71,6 +71,8 @@ class CaffeExtractor():
     def getOutput(self,IMAGE_FILE):
 	self.input_data = None
         self.input_data = self.formatInput(IMAGE_FILE)
+	if self.input_data is None:
+		return None
 	self.net.forward(data=self.input_data)
 	self.out = {}
 	for layer in self.conf.OUTPUT_LAYERS:
@@ -94,7 +96,7 @@ class CaffeExtractor():
             self.map_cat_pos={}
             for key in self.map_cat_lists:
                 self.map_cat_pos[key]=[]
-                for cat in self.map_cat_lists[key]:
+                for cat in json_map[key]:
                     self.map_cat_pos[key].extend(np.where(self.np_cat==cat))
                     self.all_mapped_cat.extend(np.where(self.np_cat==cat))
 
@@ -113,6 +115,8 @@ class CaffeExtractor():
 ce = CaffeExtractor()
 IMAGE_FILE = './deepmodels/04_Marlin_Modelo_1894.jpg'
 out = ce.getOutput(IMAGE_FILE)
-ce.show_res_batch()
-
+if out is not None:
+	ce.show_res_batch()
+else:
+	print "Did not get any output for image {}.".format(IMAGE_FILE)
 
