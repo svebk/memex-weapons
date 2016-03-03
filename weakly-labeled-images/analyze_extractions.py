@@ -3,24 +3,24 @@ import re
 basepath="/srv/skaraman/weapons/"
 website="gunsamerica"
 
-#all_extr=json.load(open("guns_america_extractions2.json","r"))
+#all_extr=json.load(open("guns_america_landmark_extractions2.json","r"))
 #all_extr=json.load(open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r"))
 
 all_infos=[]
 extr_file=open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r")
 for line in extr_file:
     one_extr=json.loads(line)
-    extrk=all_extr[i].keys()[0]
-    one_cat=all_extr[i][extrk]['extractions']['category']
-    title=all_extr[i][extrk]['extractions']['title']
+    extrk=one_extr.keys()[0]
+    one_cat=one_extr[extrk]['landmark_extractions']['category']
+    title=one_extr[extrk]['landmark_extractions']['title']
     # Beware, some price might be auctions prices (e.g. down to 0$...)
-    price=all_extr[i][extrk]['extractions']['current_price']
-    condition=[all_extr[i][extrk]['extractions']['details'][ii]['value'] for ii in range(len(all_extr[i][extrk]['extractions']['details'])) if all_extr[i][extrk]['extractions']['details'][ii]['label']=='Condition']
-    brand=[all_extr[i][extrk]['extractions']['details'][ii]['value'] for ii in range(len(all_extr[i][extrk]['extractions']['details'])) if all_extr[i][extrk]['extractions']['details'][ii]['label']=='Brand']
-    caliber=[all_extr[i][extrk]['extractions']['details'][ii]['value'] for ii in range(len(all_extr[i][extrk]['extractions']['details'])) if all_extr[i][extrk]['extractions']['details'][ii]['label']=='Caliber']
-    imgs=[x for x in enumerate(all_extr[i][extrk]['original_doc']['outlinks'])\
-         for img in all_extr[i][extrk]['extractions']['images'] if x[1].endswith(img)]
-    imgs_paths=[all_extr[i][extrk]['original_doc']['outpaths'][pos[0]] for pos in all_images[i]]
+    price=one_extr[extrk]['landmark_extractions']['current_price']
+    condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
+    brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
+    caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
+    imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
+         for img in one_extr[extrk]['landmark_extractions']['images'] if x[1].endswith(img)]
+    imgs_paths=[one_extr[extrk]['original_doc']['outpaths'][pos[0]] for pos in imgs]
     all_infos.append((extrk,one_cat,imgs,imgs_paths,title,price,condition,brand,caliber))
 
 inc_kw=json.load(open("svebor_included_keywords.json","r"))
