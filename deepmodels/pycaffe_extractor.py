@@ -18,6 +18,7 @@ class CaffeExtractorConf():
     MEAN_FILE = './deepmodels/imagenet_mean.npy'
     CAT_FILE = './deepmodels/cat_20K.txt'
     WEAPONS_CAT_FILE = './deepmodels/weapon_classes.npy'
+    WEAPONS_MAPPING_FILE = './deepmodels/imagenet_memex_mapping.json'
     WITH_FLIP = True
     WITH_CROP = False
     OUTPUT_LAYERS=['prob']
@@ -43,6 +44,7 @@ class CaffeExtractor():
 	self.conf.batch_size = self.net.blobs['data'].data.shape[0]
 	self.conf.IN_DIM = (self.net.blobs['data'].data.shape[2],self.net.blobs['data'].data.shape[3])
 	self.wf=np.where(np.load(self.conf.WEAPONS_CAT_FILE)==1)[0]
+    sefl.mapCatList()
 
     def formatInput(self,IMAGE_FILE):
 	start=(256-224)/2
@@ -83,6 +85,18 @@ class CaffeExtractor():
                 cat_lists.append(line)
 	print "We have",str(len(cat_lists)),"classes in total."
 	return np.asarray(cat_lists)
+
+    def mapCatList(self):
+        with open(self.conf.WEAPONS_MAPPING_FILE,"r") as f:
+            json_map=json.load(f)
+            self.map_cat_lists=json_map.keys()
+            self.all_mapped_cat=[]
+            self.map_cat_pos={}
+            for key in self.map_cat_lists:
+                self.map_cat_pos[key]=[]
+                for cat in self.map_cat_lists[key]:
+                    self.map_cat_pos[key].extend(np.where(self.np_cat==cat))
+                    self.all_mapped_cat.extend(np.where(self.np_cat==cat))
 
     def show_res_batch(self):     
 	batch_in = self.input_data.shape[0]
