@@ -1,0 +1,11 @@
+net: "CNN_20k_train_ukhack.txt"
+base_lr: 0.005
+lr_policy: "step"
+gamma: 0.5
+stepsize: 100000
+display: 5000
+max_iter: 2000000
+momentum: 0.9
+snapshot: 50000
+snapshot_prefix: "uktrain_models/CNN_20k_ukhack"
+solver_mode: GPU
