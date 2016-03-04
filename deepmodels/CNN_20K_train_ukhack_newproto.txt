@@ -1,9 +1,9 @@
 name: "CaffeNet"
-layers {
+layer {
   name: "input"
-  type: MEMORY_DATA
+  type: "MemoryData"
   top: "data"
-  top: "label"
+  top: "label_task1"
   memory_data_param {
     batch_size: 64
     channels: 3
@@ -11,50 +11,66 @@ layers {
     width: 224
   }
 }
-layers {
+layer {
   bottom: "data"
   top: "conv1"
   name: "conv1"
-  type: CONVOLUTION
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 96
     kernel_size: 7
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "conv1"
   top: "conv1"
   name: "relu1"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv1"
   top: "norm1"
   name: "norm1"
-  type: LRN
+  type: "LRN"
   lrn_param {
     local_size: 5
     alpha: 0.0005
     beta: 0.75
   }
 }
-layers {
+layer {
   bottom: "norm1"
   top: "pool1"
   name: "pool1"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 3
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool1"
   top: "conv2"
   name: "conv2"
-  type: CONVOLUTION
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     pad: 1
@@ -62,156 +78,185 @@ layers {
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "conv2"
   top: "conv2"
   name: "relu2"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv2"
   top: "norm2"
   name: "norm2"
-  type: LRN
+  type: "LRN"
   lrn_param {
     local_size: 5
     alpha: 0.0005
     beta: 0.75
   }
 }
-layers {
+layer {
   bottom: "norm2"
   top: "pool2"
   name: "pool2"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 3
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool2"
   top: "conv3"
   name: "conv3"
-  type: CONVOLUTION
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     pad: 1
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv3"
   top: "conv3"
   name: "relu3"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv3"
   top: "conv4"
   name: "conv4"
-  type: CONVOLUTION
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     pad: 1
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv4"
   top: "conv4"
   name: "relu4"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv4"
   top: "conv5"
   name: "conv5"
-  type: CONVOLUTION
+  type: "Convolution"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     pad: 1
     kernel_size: 3
   }
 }
-layers {
+layer {
   bottom: "conv5"
   top: "conv5"
   name: "relu5"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "conv5"
   top: "pool5"
   name: "pool5"
-  type: POOLING
+  type: "Pooling"
   pooling_param {
     pool: MAX
     kernel_size: 3
     stride: 2
   }
 }
-layers {
+layer {
   bottom: "pool5"
   top: "fc6"
   name: "fc6"
-  type: INNER_PRODUCT
+  type: "InnerProduct"
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
   inner_product_param {
     num_output: 4096
   }
 }
-layers {
+layer {
   bottom: "fc6"
   top: "fc6"
   name: "relu6"
-  type: RELU
+  type: "ReLU"
 }
-layers {
+layer {
   bottom: "fc6"
   top: "fc6"
   name: "drop6"
-  type: DROPOUT
+  type: "Dropout"
   dropout_param {
     dropout_ratio: 0.5
   }
 }
-layers {
+layer {
   bottom: "fc6"
-  top: "fc7"
-  name: "fc7"
-  type: INNER_PRODUCT
+  top: "fc7_ukhack"
+  name: "fc7_ukhack"
+  type: "InnerProduct"
   inner_product_param {
     num_output: 2048
   }
 }
-layers {
-  bottom: "fc7"
-  top: "fc7"
+layer {
+  bottom: "fc7_ukhack"
+  top: "fc7_ukhack"
   name: "relu7"
-  type: RELU
+  type: "ReLU"
 }
-layers {
-  bottom: "fc7"
-  top: "fc7"
+layer {
+  bottom: "fc7_ukhack"
+  top: "fc7_ukhack"
   name: "drop7"
-  type: DROPOUT
+  type: "Dropout"
   dropout_param {
     dropout_ratio: 0.5
   }
 }
-layers {
-  bottom: "fc7"
-  top: "fc8"
-  name: "fc8_large"
-  type: INNER_PRODUCT
+layer {
+  bottom: "fc7_ukhack"
+  top: "fc8_ukhack_task1"
+  name: "fc8_ukhack_task1"
+  type: "InnerProduct"
   inner_product_param {
-    num_output: 20574
+    num_output: 10
   }
 }
-layers {
-  name: "prob"
-  type: SOFTMAX
-  bottom: "fc8"
-  top: "prob"
+layer {
+  name: "loss_task1"
+  type: "SoftmaxWithLoss"
+  bottom: "fc8_ukhack_task1"
+  bottom: "label_task1"
+  top: "loss_task1"
 }

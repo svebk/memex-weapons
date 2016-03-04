@@ -126,3 +126,4 @@ if out is not None:
 else:
 	print "Did not get any output for image {}.".format(IMAGE_FILE)
 
+# Use Net.set_input_arrays to train with MemoryData layer
