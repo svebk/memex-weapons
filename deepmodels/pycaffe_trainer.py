@@ -43,8 +43,8 @@ class CaffeTrainer():
         # This will already load weights from layers with matching names
         self.net = caffe.Net(self.conf.TRAIN_MODEL_FILE, self.conf.PRETRAINED, caffe.TRAIN)
         # Manually copy layers with different names here...
-        fc7key=[key for key in self.net.keys() if key.startswith('fc7')]
-        self.net[fc7key[0]].data=self.input_net['fc7'].data
+        fc7key=[key for key in self.net.params.keys() if key.startswith('fc7')]
+        self.net.params[fc7key[0]]=self.input_net.params['fc7']
         # initialize last parameters
         self.conf.batch_size = self.net.blobs['data'].data.shape[0]
         self.conf.IN_DIM = (self.net.blobs['data'].data.shape[2],self.net.blobs['data'].data.shape[3])

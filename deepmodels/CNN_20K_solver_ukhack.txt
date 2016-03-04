@@ -1,4 +1,4 @@
-net: "CNN_20k_train_ukhack.txt"
+net: "./deepmodels/CNN_20K_train_ukhack_newproto.prototxt"
 base_lr: 0.005
 lr_policy: "step"
 gamma: 0.5
@@ -7,5 +7,5 @@ display: 5000
 max_iter: 2000000
 momentum: 0.9
 snapshot: 50000
-snapshot_prefix: "uktrain_models/CNN_20k_ukhack"
+snapshot_prefix: "./deepmodels/uktrain_models/CNN_20K_ukhack"
 solver_mode: GPU

@@ -201,6 +201,10 @@ layer {
     lr_mult: 0
     decay_mult: 0
   }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
   inner_product_param {
     num_output: 4096
   }
