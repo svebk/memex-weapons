@@ -27,6 +27,7 @@ class CaffeTrainer():
     conf = None  
     net = None  
     mean_img = None
+    seen_trained_data = 0
 
     def __init__(self, in_conf=CaffeTrainerConf()):
         self.conf = in_conf
@@ -40,17 +41,21 @@ class CaffeTrainer():
             caffe.set_mode_cpu()
         self.mean_img = np.load(self.conf.MEAN_FILE)
         self.input_net = caffe.Net(self.conf.INPUT_MODEL_FILE, self.conf.PRETRAINED, caffe.TEST)
-        # This will already load weights from layers with matching names
-        self.net = caffe.Net(self.conf.TRAIN_MODEL_FILE, self.conf.PRETRAINED, caffe.TRAIN)
-        # Manually copy layers with different names here...
-        fc7key=[key for key in self.net.params.keys() if key.startswith('fc7')]
-        self.net.params[fc7key[0]]=self.input_net.params['fc7']
-        # initialize last parameters
-        self.conf.batch_size = self.net.blobs['data'].data.shape[0]
-        self.conf.IN_DIM = (self.net.blobs['data'].data.shape[2],self.net.blobs['data'].data.shape[3])
+        # # This will already load weights from layers with matching names
+        # self.net = caffe.Net(self.conf.TRAIN_MODEL_FILE, self.conf.PRETRAINED, caffe.TRAIN)
         # initialize solver
         self.solver = caffe.SGDSolver(self.conf.SOLVER_FILE)
-
+        # Copy same layers
+        for key in self.input_net.params.keys():
+            if key in self.solver.params.keys():
+                self.solver.net.params[key]=self.input_net.params[key]                
+        # Manually copy layers with different names here...
+        fc7key=[key for key in self.net.params.keys() if key.startswith('fc7')]
+        self.solver.net.params[fc7key[0]]=self.input_net.params['fc7']
+        # initialize last parameters
+        self.conf.batch_size = self.solver.net.blobs['data'].data.shape[0]
+        self.conf.IN_DIM = (self.solver.net.blobs['data'].data.shape[2],self.solver.net.blobs['data'].data.shape[3])
+        
     def formatInput(self,IMAGE_FILE):
         start=(256-224)/2
         end=start+224
@@ -75,18 +80,29 @@ class CaffeTrainer():
                 input_data = np.asarray([(input_image_t-self.mean_img[:,start:end,start:end])])
         return input_data
 
-    def fillInput(self,trainingFilesList):
+    def setTrainingFilesList(self,trainingFilesList):
+        self.seen_trained_data = 0
+        self.training_files_list = trainingFilesList
+
+    def fillInput(self,oneBatchFilesList):
         self.input_data = []
-        for oneImg in trainingFilesList:
+        for oneImg in oneBatchFilesList:
             input_image = self.formatInput(IMAGE_FILE)
             if input_image is None:
-                return None
+                print "Could not read image {}.".format(IMAGE_FILE)
+                return continue
             self.input_data.append(input_image)
+        self.seen_trained_data=self.seen_trained_data+len(oneBatchFilesList)
         # How to deal with labels?
         return self.input_data
 
     def train(self):
-        pass
+
+        # getOneBatch
+        batch_data = self.getOneBatchData()
+        # push data
+        self.solver.net.blobs['data'].data = batch_data
+        self.solver.step(1)
 
 if __name__ == "__main__":
     # TODO get parameters from argsparse
