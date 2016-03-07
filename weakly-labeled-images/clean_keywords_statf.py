@@ -10,24 +10,32 @@ with open(cat_map,"rt") as cm:
 
 # Initialize output dict of sets
 out_k={}
-for cat in cm_json.keys():
-  out_k[cat]=set()
+for cat in cm_json:
+  print cm_json[cat]
+  out_k[cm_json[cat]]=set()
 
 # Go other the stolen list of make,model,category,caliber and map these to the clean data
 with open(kcsv) as kf:
   for line in kf:
     fields=line.split(',')
-    clean_cat=cm_json(fields[2])
+    try:
+      clean_cat=cm_json[fields[2]]
+    except:
+      continue
     if clean_cat:
       unknown_fields=[True for onefield in fields if onefield==["Z"]*len(onefield)]
       if unknown_fields.count(True)>0:
 	continue
       if fields[1]:
-	tup=(fields[0],fields[1],fields[3])
+	tup=(fields[0].strip(),fields[1].strip(),fields[3].strip())
 	if tup not in out_k[clean_cat]:
           print "Adding {} to cat {}.".format(tup,clean_cat)
-          out_k[clean_cat].add((fields[0],fields[1],fields[3]))
+          out_k[clean_cat].add(tup)
+
+# set to list because JSON does not know how to serialize sets
+for key in out_k:
+  out_k[key]=list(out_k[key])
 
 # save results
 with open(out_kjson,"wt") as okj:
-  json.dumps(okj,out_k)
+  json.dumps(out_k,okj)
