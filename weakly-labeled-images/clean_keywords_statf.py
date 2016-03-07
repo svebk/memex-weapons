@@ -1,6 +1,7 @@
 import json
 
 kcsv="keywords_statf.csv"
+mmcsv="make_mapping.csv"
 cat_map="cat_statf_mapping.json"
 out_kjson="keywords_statf.jsonl"
 
@@ -12,6 +13,13 @@ with open(cat_map,"rt") as cm:
 out_k={}
 for cat in cm_json.keys():
   out_k[cat]=set()
+
+mmd={}
+# Initialize maker mapping
+with open(mmcsv) as mmf:
+  for line in mmf:
+    fields=line.split(',')
+    mmd[fields[0].strip()]=(fields[1].strip(),fields[2].strip())
 
 # Go other the stolen list of make,model,category,caliber and map these to the clean data
 with open(kcsv) as kf:
