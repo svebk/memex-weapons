@@ -93,10 +93,10 @@ if __name__ == "__main__":
     ce = CaffeTrainer()
     # TODO
     # Get a list of images and corresponding labels
-    trainingFilesList = None
+    #trainingFilesList = None
     # get images from json files:
     # - label files are key-category 
     # - data files are 
     # Use Net.set_input_arrays to train with MemoryData layer
-    ce.fillInput(trainingFilesList)
-    ce.train()
+    #ce.fillInput(trainingFilesList)
+    #ce.train()
