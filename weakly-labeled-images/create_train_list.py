@@ -23,31 +23,32 @@ if __name__=="__main__":
         init_cat=line.index('[')
         rem_line=line[:init_cat]
         cat_raw=line[init_cat:]
-	fields=rem_line.split(' ')
+        fields=rem_line.split(' ')
         #print fields,cat_raw
         cat = "Other"
         tmp_cat=[cc.strip() for cc in cat_raw.strip('[]\n').split('\'') if cc and cc!="','"]
         if len(tmp_cat)>1:
-		print "We have an ambiguity: {}.".format(tmp_cat)
-		continue
-		if "Silencer" in tmp_cat:
-			print "Using Silencer as category"
-			cat = "Silencer"
-		if "Handgun" in tmp_cat and "Machine Gun" in tmp_cat:
-			print "Using Machine Gun as category"
-                        cat = "Machine Gun"
-                if "Shotgun" in tmp_cat and "Machine Gun" in tmp_cat:
-                        print "Using Shotgun as category"
-                        cat = "Shotgun"
-                if "Ammo" in tmp_cat and "Other" in tmp_cat:
-                        print "Using Ammo as category"
-                        cat = "Ammo"
-		#time.sleep(1)
-	elif tmp_cat:
-		cat=tmp_cat[0]
+          print "We have an ambiguity: {}.".format(tmp_cat)
+          continue
+          # discarding this for now.
+          if "Silencer" in tmp_cat:
+            print "Using Silencer as category"
+            cat = "Silencer"
+          if "Handgun" in tmp_cat and "Machine Gun" in tmp_cat:
+            print "Using Machine Gun as category"
+            cat = "Machine Gun"
+          if "Shotgun" in tmp_cat and "Machine Gun" in tmp_cat:
+            print "Using Shotgun as category"
+            cat = "Shotgun"
+          if "Ammo" in tmp_cat and "Other" in tmp_cat:
+            print "Using Ammo as category"
+            cat = "Ammo"
+        #time.sleep(1)
+        elif tmp_cat:
+          cat=tmp_cat[0]
         ads_cats[fields[0].strip()]=cat
-	if cat not in all_cats:
-		all_cats.append(cat)
+        if cat not in all_cats:
+          all_cats.append(cat)
 
   print len(all_cats),all_cats
   #print ads_cats
@@ -61,7 +62,7 @@ if __name__=="__main__":
     extrk=one_extr.keys()[0].strip()
     # find corresponding clean category
     if extrk not in ads_cats:
-	#print "No category match for {}. Skipping".format(extrk)
+    #print "No category match for {}. Skipping".format(extrk)
         continue
     cat=ads_cats[extrk]       
     # Beware, some price might be auctions prices (e.g. down to 0$...)
@@ -75,6 +76,6 @@ if __name__=="__main__":
     # print images and label in train_files
     start_out=len("file:/data2/USCWeaponsStatsGathering/nutch/full_dump/")
     for img in imgs_paths:
-	#print img[start_out:],cat,all_cats.index(cat)
-	 out_train.write("{} {}\n".format(img[start_out:],all_cats.index(cat)))
+      #print img[start_out:],cat,all_cats.index(cat)
+      out_train.write("{} {}\n".format(img[start_out:],all_cats.index(cat)))
   out_train.close()
