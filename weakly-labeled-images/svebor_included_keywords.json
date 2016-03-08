@@ -1,6 +1,6 @@
 {
 "Handgun": "",
-"Shotgun": ["Semi-automatic","Pump action","Bolt action","Lever action","single shot action"],
+"Shotgun": "",
 "Rifle": ["Semi-automatic","Pump action","Bolt action","Lever action","single shot action"],
 "Machine Gun": ["machinegun","machine gun","fully automatic","STEN", "Uzi", "MAC", "AK", "M16", "SKS", "MP5", "CZ", "Scorpion", "MP40", "Sterling", "Thompson", "FAL", "MG34", "MG42", "PKM", "M1919", "M1917", "MP38", "MP40", "G3", "Vulcan", "minigun", "Maxim", "Vickers", "KG-9", "SM10", "SM11A1", "AK47", "MP-43", "MP-44", "STG-44", "M-10", "SM-10", "PM-98", "M60", "MP7", "Hotchkiss", "PPS", "M3", "AR-18", "M240", "Swedish K", "Czech Vz", "Spitfire Carbine", "readily restored", "submachine gun", "select fire"],
 "Silencer": ["Clandestine", "muffler", "suppressor", "baffles", "end-caps", "Oil trap", "oil trap adapter", "solvent trap", "filter adapter", "fuel filter adapter", "oil filter adapter", "freeze plug baffle","can"],
