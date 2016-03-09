@@ -7,7 +7,7 @@ import time
 
 if __name__=="__main__":
   if len(sys.argv)!=4:
-    print "[Usage] python create_train_list.py ads_cat_list.txt extr.jsonl out_train_file.txt"
+    print "[Usage] python create_train_list.py ads_cat_list.jsonl extr.jsonl out_train_file.txt"
     quit()
 
   ads_cat_list=sys.argv[1]
@@ -20,35 +20,19 @@ if __name__=="__main__":
   all_cats=[]
   with open(ads_cat_list,'rt') as acl:
     for line in acl:
-        init_cat=line.index('[')
-        rem_line=line[:init_cat]
-        cat_raw=line[init_cat:]
-        fields=rem_line.split(' ')
-        #print fields,cat_raw
-        cat = "Other"
-        tmp_cat=[cc.strip() for cc in cat_raw.strip('[]\n').split('\'') if cc and cc!="','"]
-        if len(tmp_cat)>1:
-          print "We have an ambiguity: {}.".format(tmp_cat)
-          continue
-          # discarding this for now.
-          if "Silencer" in tmp_cat:
-            print "Using Silencer as category"
-            cat = "Silencer"
-          if "Handgun" in tmp_cat and "Machine Gun" in tmp_cat:
-            print "Using Machine Gun as category"
-            cat = "Machine Gun"
-          if "Shotgun" in tmp_cat and "Machine Gun" in tmp_cat:
-            print "Using Shotgun as category"
-            cat = "Shotgun"
-          if "Ammo" in tmp_cat and "Other" in tmp_cat:
-            print "Using Ammo as category"
-            cat = "Ammo"
-        #time.sleep(1)
-        elif tmp_cat:
-          cat=tmp_cat[0]
-        ads_cats[fields[0].strip()]=cat
-        if cat not in all_cats:
-          all_cats.append(cat)
+      jl=json.loads(line)
+      key=jl.keys()[0]
+      cat = "Other"
+      tmp_cat=jl[key][1]
+      if len(tmp_cat)>1:
+        print "We have an ambiguity: {}.".format(tmp_cat)
+        continue
+      #time.sleep(1)
+      elif tmp_cat:
+        cat=tmp_cat
+      ads_cats[key]=cat
+      if cat not in all_cats:
+        all_cats.append(cat)
 
   print len(all_cats),all_cats
   #print ads_cats
