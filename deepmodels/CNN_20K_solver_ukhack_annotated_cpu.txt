@@ -1,11 +1,11 @@
 net: "./weapons/memex-weapons/deepmodels/CNN_20K_train_ukhack_newproto_leveldb_annotated.prototxt"
-base_lr: 0.005
+base_lr: 0.001
 lr_policy: "step"
 gamma: 0.5
-stepsize: 50000
+stepsize: 20000
 display: 5000
-max_iter: 2000000
+max_iter: 200000
 momentum: 0.9
 snapshot: 10000
-snapshot_prefix: "./weapons/memex-weapons/deepmodels/uktrain_models/CNN_20K_ukhack"
-solver_mode: GPU
+snapshot_prefix: "./weapons/memex-weapons/deepmodels/uktrain_models/CNN_20K_ukhack_annotated"
+solver_mode: CPU
