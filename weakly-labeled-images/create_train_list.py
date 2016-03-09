@@ -34,7 +34,7 @@ def getImageFromImagecat(image_id,out_dir,base_outfn):
   outpath=os.path.join(out_dir,base_outfn)
   mkpath(outpath)
   try:
-    r = requests.get(url, stream=True, auth=(imagecat['user'], imagecat['passwd']))
+    r = requests.get(url, stream=True, auth=(imagecat['user'], imagecat['passwd']), timeout=5)
     if r.status_code == 200:
       with open(outpath, 'wb') as f:
         r.raw.decode_content = True
@@ -49,7 +49,7 @@ def getImageFromOriginalURL(url,out_dir,base_outfn):
   outpath=os.path.join(out_dir,base_outfn)
   mkpath(outpath)
   try:
-    r = requests.get(url, stream=True)
+    r = requests.get(url, stream=True, timeout=5)
     if r.status_code == 200:
       with open(outpath, 'wb') as f:
         r.raw.decode_content = True
@@ -129,7 +129,7 @@ if __name__=="__main__":
     # print images and label in train_files
     start_out=len("file:/data2/USCWeaponsStatsGathering/nutch/full_dump/")
     for img in imgs_paths:
-      #print img[start_out:],cat,all_cats.index(cat)
+      print img[0][start_out:],cat,all_cats.index(cat)
       if getImg(img,out_dir):
         out_train.write("{} {}\n".format(img[0][start_out:],all_cats.index(cat)))
       #time.sleep(2)
