@@ -1,19 +1,86 @@
 import sys
 import json
 import time
+import os
+import requests
+import shutil
 
 #basepath="/srv/skaraman/weapons/"
 #website="gunsamerica"
 
+imagecat=json.load(open('imagecat_conf.json','rt'))
+
+def mkpath(outpath):
+  pos_slash=[pos for pos,c in enumerate(outpath) if c=="/"]
+  for pos in pos_slash:
+    try:
+      os.mkdir(outpath[:pos])
+    except:
+      pass
+
+def copyFromDump(image_id,out_dir,base_outfn):
+  try:
+    dump_dir="/srv/skaraman/weapons/JPL_WeaponsImages/image_dump/"
+    outpath=os.path.join(out_dir,base_outfn)
+    mkpath(outpath)
+    shutil.copyfile(dump_dir+image_id, outpath)
+    return True
+  except Exception as inst:
+    print inst
+    return False
+
+def getImageFromImagecat(image_id,out_dir,base_outfn):
+  url=imagecat['imagecat_host']+"/weapons/alldata/"+str(image_id)
+  outpath=os.path.join(out_dir,base_outfn)
+  mkpath(outpath)
+  try:
+    r = requests.get(url, stream=True, auth=(imagecat['user'], imagecat['passwd']))
+    if r.status_code == 200:
+      with open(outpath, 'wb') as f:
+        r.raw.decode_content = True
+        shutil.copyfileobj(r.raw, f)
+        return True
+  except Exception as inst:
+    print "Download failed for img {} that should be saved at {} from url {}.".format(image_id,base_outfn,url)
+    print inst 
+    return False
+
+def getImageFromOriginalURL(url,out_dir,base_outfn):
+  outpath=os.path.join(out_dir,base_outfn)
+  mkpath(outpath)
+  try:
+    r = requests.get(url, stream=True)
+    if r.status_code == 200:
+      with open(outpath, 'wb') as f:
+        r.raw.decode_content = True
+        shutil.copyfileobj(r.raw, f)
+        return True
+  except Exception as inst:
+    print "Download failed for img that should be saved at {} from url {}.".format(base_outfn,url)
+    print inst
+    return False
+
+def getImg(img,out_dir):
+  start_out=len("file:/data2/USCWeaponsStatsGathering/nutch/full_dump/")
+  if not os.path.isfile(os.path.join(out_dir,img[0][start_out:])): 
+    if not copyFromDump(img[0][start_out:],out_dir,img[0][start_out:]):
+      if not getImageFromImagecat(img[0][start_out:],out_dir,img[0][start_out:]):
+        if not getImageFromOriginalURL(img[1],out_dir,img[0][start_out:]):
+          return False
+  return True
+
+
 if __name__=="__main__":
-  if len(sys.argv)!=4:
-    print "[Usage] python create_train_list.py ads_cat_list.jsonl extr.jsonl out_train_file.txt"
+  if len(sys.argv)!=6:
+    print "[Usage] python create_train_list.py ads_cat_list.jsonl extr.jsonl out_train_file.txt out_cats_list_map.txt out_dir"
     quit()
 
   ads_cat_list=sys.argv[1]
   extr_filename=sys.argv[2]
   out_filename=sys.argv[3]
-  print ads_cat_list,extr_filename,out_filename
+  out_castlist_filename=sys.argv[4]
+  out_dir=sys.argv[5]
+  print ads_cat_list,extr_filename,out_filename,out_castlist_filename,out_dir
 
   # read cat list and store as dict
   ads_cats={}
@@ -23,12 +90,10 @@ if __name__=="__main__":
       jl=json.loads(line)
       key=jl.keys()[0]
       cat = "Other"
-      tmp_cat=jl[key][1]
-      if len(tmp_cat)>1:
-        print "We have an ambiguity: {}.".format(tmp_cat)
-        continue
+      #print jl[key]
+      tmp_cat=jl[key].strip()
       #time.sleep(1)
-      elif tmp_cat:
+      if tmp_cat:
         cat=tmp_cat
       ads_cats[key]=cat
       if cat not in all_cats:
@@ -36,6 +101,10 @@ if __name__=="__main__":
 
   print len(all_cats),all_cats
   #print ads_cats
+  with open(out_castlist_filename,"wt") as ocl:
+    for i,cat in enumerate(all_cats):
+      ocl.write("{} \"{}\"\n".format(i,cat))
+  ocl.close()
   time.sleep(1)
 
   extr_file=open(extr_filename,'rt')
@@ -56,10 +125,12 @@ if __name__=="__main__":
     caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
     imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
          for img in one_extr[extrk]['landmark_extractions']['images'] if x[1].endswith(img)]
-    imgs_paths=[one_extr[extrk]['original_doc']['outpaths'][pos[0]] for pos in imgs]
+    imgs_paths=[(one_extr[extrk]['original_doc']['outpaths'][pos[0]],pos[1]) for pos in imgs]
     # print images and label in train_files
     start_out=len("file:/data2/USCWeaponsStatsGathering/nutch/full_dump/")
     for img in imgs_paths:
       #print img[start_out:],cat,all_cats.index(cat)
-      out_train.write("{} {}\n".format(img[start_out:],all_cats.index(cat)))
+      if getImg(img,out_dir):
+        out_train.write("{} {}\n".format(img[0][start_out:],all_cats.index(cat)))
+      #time.sleep(2)
   out_train.close()
