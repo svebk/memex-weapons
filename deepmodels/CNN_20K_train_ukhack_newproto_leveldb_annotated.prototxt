@@ -11,7 +11,7 @@ layer {
   }
   transform_param {
     scale: 0.00390625
-    #mean_file: "/srv/skaraman/weapons/memex-weapons/deepmodels/imagenet_mean.binaryproto"
+    mean_file: "/srv/skaraman/weapons/memex-weapons/deepmodels/imagenet_mean.binaryproto"
     #mirror: true
     crop_size: 224
   }

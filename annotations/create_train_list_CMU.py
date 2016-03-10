@@ -26,7 +26,13 @@ if __name__=="__main__":
   out_dir=sys.argv[5]
   print CMU_images_dir,cmu_cat_map_filename,out_filename,out_castlist_filename,out_dir
 
-  cmu_cat_map=json.load(open(cmu_cat_map_filename,"rt"))
+  cmu_cat_map={}
+  with open(cmu_cat_map_filename,"rt") as cmm:
+    for line in cmm:
+	tmpjson=json.loads(line)
+	tmpkey=tmpjson.keys()[0]
+        cmu_cat_map[tmpkey]=tmpjson[tmpkey]
+  print cmu_cat_map
 
   # read cat map json and store as list
   all_cats=[]
@@ -36,6 +42,7 @@ if __name__=="__main__":
         all_cats.append(cat)
 
   print len(all_cats),all_cats
+  mkpath(out_castlist_filename)
   with open(out_castlist_filename,"wt") as ocl:
     for i,cat in enumerate(all_cats):
       ocl.write("{} \"{}\"\n".format(i,cat))
@@ -57,12 +64,13 @@ if __name__=="__main__":
           # we have a valid image
           ext_img=[pos for pos,ext in enumerate(valid_extensions) if img.endswith(ext)]
           out_img_name=str(img_count)+"."+valid_extensions[ext_img[0]]
-          print out_img_name
+          #print out_img_name
           out_img_fullpath=os.path.join(tmp_out_dir,out_img_name)
-          print out_img_fullpath
+          #print out_img_fullpath
+          mkpath(out_img_fullpath)
           out_img_shortpath=os.path.join(key,out_img_name)
-          print out_img_shortpath
-          time.sleep(2)
+          #print out_img_shortpath
+          #time.sleep(2)
           shutil.copyfile(os.path.join(CMU_images_dir,directory,img), out_img_fullpath)
           out_train.write("{} {}\n".format(out_img_shortpath,all_cats.index(key.strip())))
           img_count=img_count+1

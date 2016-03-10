@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # This script converts the data crawled by JPL and weakly labeled into leveldb format.
-export LD_LIBRARY_PATH=/srv/skaraman/anaconda/envs/memex-weapons/lib/:$LD_LIBRARY_PATH
+#export LD_LIBRARY_PATH=/srv/skaraman/anaconda/envs/memex-weapons/lib/:$LD_LIBRARY_PATH
 
 DBOUTLOC=/srv/skaraman/weapons/data/caffe
 TOOLS=/srv/skaraman/caffe/build/tools
