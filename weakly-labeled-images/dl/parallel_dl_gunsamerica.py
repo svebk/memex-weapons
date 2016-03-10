@@ -4,12 +4,14 @@ import time
 import os
 import requests
 import shutil
+from Queue import *
+from threading import Thread
 
 #basepath="/srv/skaraman/weapons/"
 #website="gunsamerica"
 
 imagecat=json.load(open('imagecat_conf.json','rt'))
-timeout_val=2
+nb_threads=16
 
 def mkpath(outpath):
   pos_slash=[pos for pos,c in enumerate(outpath) if c=="/"]
@@ -35,7 +37,7 @@ def getImageFromImagecat(image_id,out_dir,base_outfn):
   outpath=os.path.join(out_dir,base_outfn)
   mkpath(outpath)
   try:
-    r = requests.get(url, stream=True, auth=(imagecat['user'], imagecat['passwd']), timeout=timeout_val)
+    r = requests.get(url, stream=True, auth=(imagecat['user'], imagecat['passwd']), timeout=5)
     if r.status_code == 200:
       with open(outpath, 'wb') as f:
         r.raw.decode_content = True
@@ -50,7 +52,7 @@ def getImageFromOriginalURL(url,out_dir,base_outfn):
   outpath=os.path.join(out_dir,base_outfn)
   mkpath(outpath)
   try:
-    r = requests.get(url, stream=True, timeout=timeout_val)
+    r = requests.get(url, stream=True, timeout=5)
     if r.status_code == 200:
       with open(outpath, 'wb') as f:
         r.raw.decode_content = True
@@ -71,21 +73,31 @@ def getImg(img,out_dir):
   return True
 
 
+def worker():
+        while True:
+                tupInp = q.get()
+                getImg(tupInp[0], tupInp[1])
+                q.task_done()
+
+q= Queue()
+for i in range(nb_threads):
+        t=Thread(target=worker)
+        t.daemon=True
+        t.start()
+
+
+
 if __name__=="__main__":
-  if len(sys.argv)!=6:
-    print "[Usage] python create_train_list.py ads_cat_list.jsonl extr.jsonl out_train_file.txt out_cats_list_map.txt out_dir"
+  if len(sys.argv)!=4:
+    print "[Usage] python create_train_list.py ads_cat_list.jsonl extr.jsonl out_dir"
     quit()
 
   ads_cat_list=sys.argv[1]
   extr_filename=sys.argv[2]
-  out_filename=sys.argv[3]
-  out_castlist_filename=sys.argv[4]
-  out_dir=sys.argv[5]
-  print ads_cat_list,extr_filename,out_filename,out_castlist_filename,out_dir
+  out_dir=sys.argv[3]
+  print ads_cat_list,extr_filename,out_dir
 
-  # read cat list and store as dict
   ads_cats={}
-  all_cats=[]
   with open(ads_cat_list,'rt') as acl:
     for line in acl:
       jl=json.loads(line)
@@ -97,19 +109,8 @@ if __name__=="__main__":
       if tmp_cat:
         cat=tmp_cat
       ads_cats[key]=cat
-      if cat not in all_cats:
-        all_cats.append(cat)
-
-  print len(all_cats),all_cats
-  #print ads_cats
-  with open(out_castlist_filename,"wt") as ocl:
-    for i,cat in enumerate(all_cats):
-      ocl.write("{} \"{}\"\n".format(i,cat))
-  ocl.close()
-  time.sleep(1)
 
   extr_file=open(extr_filename,'rt')
-  out_train=open(out_filename,'wt')
   #extr_file=open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r")
   for line in extr_file:
     one_extr=json.loads(line)
@@ -124,14 +125,14 @@ if __name__=="__main__":
     #condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
     #brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
     #caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
+    x = "oneteststring"
+    tmp = [img for img in one_extr[extrk]['landmark_extractions']['images']]
+    for onetmp in tmp:
+      print onetmp
+      print x.endswith(onetmp)
     imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
          for img in one_extr[extrk]['landmark_extractions']['images'] if x[1].endswith(img)]
     imgs_paths=[(one_extr[extrk]['original_doc']['outpaths'][pos[0]],pos[1]) for pos in imgs]
-    # print images and label in train_files
-    start_out=len("file:/data2/USCWeaponsStatsGathering/nutch/full_dump/")
     for img in imgs_paths:
-      print img[0][start_out:],cat,all_cats.index(cat)
-      if getImg(img,out_dir):
-        out_train.write("{} {}\n".format(img[0][start_out:],all_cats.index(cat)))
-      #time.sleep(2)
-  out_train.close()
+      q.put((img,out_dir))
+  q.join()

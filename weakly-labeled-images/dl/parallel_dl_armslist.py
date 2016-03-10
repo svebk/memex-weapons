@@ -11,7 +11,7 @@ from threading import Thread
 #website="gunsamerica"
 
 imagecat=json.load(open('imagecat_conf.json','rt'))
-nb_threads=8
+nb_threads=16
 
 def mkpath(outpath):
   pos_slash=[pos for pos,c in enumerate(outpath) if c=="/"]
@@ -111,6 +111,8 @@ if __name__=="__main__":
       ads_cats[key]=cat
 
   extr_file=open(extr_filename,'rt')
+  start_armslist="http://cdn2.armslist.com/sites/armslist/uploads"
+
   #extr_file=open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r")
   for line in extr_file:
     one_extr=json.loads(line)
@@ -121,12 +123,12 @@ if __name__=="__main__":
         continue
     cat=ads_cats[extrk]       
     # Beware, some price might be auctions prices (e.g. down to 0$...)
-    price=one_extr[extrk]['landmark_extractions']['current_price']
-    condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
-    brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
-    caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
+    #price=one_extr[extrk]['landmark_extractions']['current_price']
+    #condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
+    #brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
+    #caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
     imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
-         for img in one_extr[extrk]['landmark_extractions']['images'] if x[1].endswith(img)]
+         for img in one_extr[extrk]['landmark_extractions']['images'] if img['src'].startswith(start_armslist) and x[1].endswith(img['src'])]
     imgs_paths=[(one_extr[extrk]['original_doc']['outpaths'][pos[0]],pos[1]) for pos in imgs]
     for img in imgs_paths:
       q.put((img,out_dir))
