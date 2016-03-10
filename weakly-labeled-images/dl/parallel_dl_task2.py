@@ -4,6 +4,7 @@ import time
 import os
 import requests
 import shutil
+import pickle
 from Queue import *
 from threading import Thread
 
@@ -89,47 +90,75 @@ for i in range(nb_threads):
 
 if __name__=="__main__":
   if len(sys.argv)!=4:
-    print "[Usage] python create_train_list.py ads_cat_list.jsonl extr.jsonl out_dir"
+    print "[Usage] python parallel_dl_task2.py base_ads_cat base_extr out_dir"
     quit()
 
-  ads_cat_list=sys.argv[1]
-  extr_filename=sys.argv[2]
+  # to be called with something like
+  # python parallel_dl_task2.py ./task2/ ../../  ../../data/task2_train &> logDlTask2.txt
+
+
+  websites=["gunsamerica", "armslist", "slickguns"]
+  start={}
+  start["armslist"]="http://cdn2.armslist.com/sites/armslist/uploads"
+  start["slickguns"]="http://cdn2.armslist.com/sites/armslist/uploads"
+
+  ads_cat_list_base=sys.argv[1]
+  extr_filename_base=sys.argv[2]
   out_dir=sys.argv[3]
-  print ads_cat_list,extr_filename,out_dir
 
   ads_cats={}
-  with open(ads_cat_list,'rt') as acl:
-    for line in acl:
-      jl=json.loads(line)
-      key=jl.keys()[0]
-      cat = "Other"
-      #print jl[key]
-      tmp_cat=jl[key].strip()
-      #time.sleep(1)
-      if tmp_cat:
-        cat=tmp_cat
-      ads_cats[key]=cat
+  all_cats_count={}
+  for web in websites:
+    print "Getting image for website {}.".format(web)
+    ads_cat_list=os.path.join(ads_cat_list_base,web+"2.jl")
+    extr_filename=os.path.join(base_extr,web,"extr_"+web+"_ads.jsonl")
+    print ads_cat_list,extr_filename,out_dir
 
-  extr_file=open(extr_filename,'rt')
-  start_armslist="http://cdn2.armslist.com/sites/armslist/uploads"
+    with open(ads_cat_list,'rt') as acl:
+      for line in acl:
+        jl=json.loads(line)
+        key=jl.keys()[0]
+        cat = "Other"
+        #print jl[key]
+        tmp_cat=jl[key].strip()
+        #time.sleep(1)
+        if tmp_cat:
+          cat=tmp_cat
+        ads_cats[key]=cat
+        if key not in all_cats_count:
+          all_cats_count[key]=0
+        else:
+          all_cats_count[key]=all_cats_count[key]+1
 
-  #extr_file=open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r")
-  for line in extr_file:
-    one_extr=json.loads(line)
-    extrk=one_extr.keys()[0].strip()
-    # find corresponding clean category
-    if extrk not in ads_cats:
-    #print "No category match for {}. Skipping".format(extrk)
+    extr_file=open(extr_filename,'rt')
+
+    #extr_file=open("{}{}/extr_{}_ads.jsonl".format(basepath,website,website),"r")
+    for line in extr_file:
+      one_extr=json.loads(line)
+      extrk=one_extr.keys()[0].strip()
+      # find corresponding clean category
+      if extrk not in ads_cats:
+        #print "No category match for {}. Skipping".format(extrk)
         continue
-    cat=ads_cats[extrk]       
-    # Beware, some price might be auctions prices (e.g. down to 0$...)
-    #price=one_extr[extrk]['landmark_extractions']['current_price']
-    #condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
-    #brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
-    #caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
-    imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
-         for img in one_extr[extrk]['landmark_extractions']['images'] if img['src'].startswith(start_armslist) and x[1].endswith(img['src'])]
-    imgs_paths=[(one_extr[extrk]['original_doc']['outpaths'][pos[0]],pos[1]) for pos in imgs]
-    for img in imgs_paths:
-      q.put((img,out_dir))
+      cat=ads_cats[extrk]       
+      if web == "gunsamerica":
+        #gunsamerica
+        imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
+             for img in one_extr[extrk]['landmark_extractions']['images'] if x[1].endswith(img)]
+      elif web == "slickguns":
+        #slickguns
+        imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
+             for img in one_extr[extrk]['landmark_extractions']['images'] if img.startswith(start_slickguns) and x[1].endswith(img)]
+        fimg = one_extr[extrk]['landmark_extractions']['featured_image']
+        featured_img=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks']) if fimg.startswith(start_slickguns) and x[1].endswith(fimg)]
+        imgs.extend(featured_img)
+      elif web == "armslist":
+        #armslist
+        imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
+             for img in one_extr[extrk]['landmark_extractions']['images'] if img['src'].startswith(start_armslist) and x[1].endswith(img['src'])]
+      imgs_paths=[(one_extr[extrk]['original_doc']['outpaths'][pos[0]],pos[1]) for pos in imgs]
+      for img in imgs_paths:
+        q.put((img,out_dir))
+  print all_cats_count
+  pickle.dump(all_cats,open("all_cats_task2.pickle","wb"))
   q.join()

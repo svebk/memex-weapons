@@ -125,11 +125,6 @@ if __name__=="__main__":
     #condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
     #brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
     #caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
-    x = "oneteststring"
-    tmp = [img for img in one_extr[extrk]['landmark_extractions']['images']]
-    for onetmp in tmp:
-      print onetmp
-      print x.endswith(onetmp)
     imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
          for img in one_extr[extrk]['landmark_extractions']['images'] if x[1].endswith(img)]
     imgs_paths=[(one_extr[extrk]['original_doc']['outpaths'][pos[0]],pos[1]) for pos in imgs]
