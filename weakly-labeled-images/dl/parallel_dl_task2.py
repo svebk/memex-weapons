@@ -111,7 +111,7 @@ if __name__=="__main__":
   for web in websites:
     print "Getting image for website {}.".format(web)
     ads_cat_list=os.path.join(ads_cat_list_base,web+"2.jl")
-    extr_filename=os.path.join(base_extr,web,"extr_"+web+"_ads.jsonl")
+    extr_filename=os.path.join(extr_filename_base,web,"extr_"+web+"_ads.jsonl")
     print ads_cat_list,extr_filename,out_dir
 
     with open(ads_cat_list,'rt') as acl:
