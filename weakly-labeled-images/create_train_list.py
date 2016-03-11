@@ -9,6 +9,7 @@ import shutil
 #website="gunsamerica"
 
 imagecat=json.load(open('imagecat_conf.json','rt'))
+timeout_val=2
 
 def mkpath(outpath):
   pos_slash=[pos for pos,c in enumerate(outpath) if c=="/"]
@@ -34,7 +35,7 @@ def getImageFromImagecat(image_id,out_dir,base_outfn):
   outpath=os.path.join(out_dir,base_outfn)
   mkpath(outpath)
   try:
-    r = requests.get(url, stream=True, auth=(imagecat['user'], imagecat['passwd']), timeout=5)
+    r = requests.get(url, stream=True, auth=(imagecat['user'], imagecat['passwd']), timeout=timeout_val)
     if r.status_code == 200:
       with open(outpath, 'wb') as f:
         r.raw.decode_content = True
@@ -49,7 +50,7 @@ def getImageFromOriginalURL(url,out_dir,base_outfn):
   outpath=os.path.join(out_dir,base_outfn)
   mkpath(outpath)
   try:
-    r = requests.get(url, stream=True, timeout=5)
+    r = requests.get(url, stream=True, timeout=timeout_val)
     if r.status_code == 200:
       with open(outpath, 'wb') as f:
         r.raw.decode_content = True
@@ -119,10 +120,10 @@ if __name__=="__main__":
         continue
     cat=ads_cats[extrk]       
     # Beware, some price might be auctions prices (e.g. down to 0$...)
-    price=one_extr[extrk]['landmark_extractions']['current_price']
-    condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
-    brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
-    caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
+    #price=one_extr[extrk]['landmark_extractions']['current_price']
+    #condition=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Condition']
+    #brand=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Brand']
+    #caliber=[one_extr[extrk]['landmark_extractions']['details'][ii]['value'] for ii in range(len(one_extr[extrk]['landmark_extractions']['details'])) if one_extr[extrk]['landmark_extractions']['details'][ii]['label']=='Caliber']
     imgs=[x for x in enumerate(one_extr[extrk]['original_doc']['outlinks'])\
          for img in one_extr[extrk]['landmark_extractions']['images'] if x[1].endswith(img)]
     imgs_paths=[(one_extr[extrk]['original_doc']['outpaths'][pos[0]],pos[1]) for pos in imgs]
