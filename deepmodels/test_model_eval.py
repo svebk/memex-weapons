@@ -118,7 +118,8 @@ if __name__=="__main__":
   if len(sys.argv)<2:
     print "Usage: python test_model.py model_folder"
   dir_model=sys.argv[1].strip('/')
-  test_imgs_dir='./result_test_images'
+  test_imgs_dir='../annotations/dataset/'
+  test_imgs_list='../annotations/eval_images.txt'
   cec = CaffeExtractorConf()
   cec.MODEL_FILE = dir_model+"/"+dir_model+'_deploy.prototxt'
   cec.PRETRAINED = dir_model+"/"+dir_model+'.caffemodel'
@@ -130,13 +131,16 @@ if __name__=="__main__":
   cec.CAFFE_MODE = "CPU"
   ce = CaffeExtractor(cec)
   out_dict={}
-  for img in os.listdir(test_imgs_dir):
-   #print img
-   if img.endswith('.jpg'):
-     IMAGE_FILE = os.path.join(test_imgs_dir,img)
-     out = ce.getOutput(IMAGE_FILE)
-     out_dict[img]=copy.deepcopy(out)
-     print img,out
-     ce.show_res_batch()
-  pickle.dump(out_dict,open(os.path.join(dir_model,"result_test_images.pickle"),"wb"))
-  np.save(os.path.join(dir_model,"result_test_images.npy"),out_dict)
+  with open(test_imgs_list,"rt") as til:
+   for img_id in til:
+     print img_id.strip()
+     img=img_id.strip()+".jpg"
+     if img not in out_dict:
+       IMAGE_FILE = os.path.join(test_imgs_dir,img)
+       print IMAGE_FILE
+       out = ce.getOutput(IMAGE_FILE)
+       out_dict[img]=copy.deepcopy(out)
+       print img,out
+       ce.show_res_batch()
+  pickle.dump(out_dict,open(os.path.join(dir_model,"result_eval_images.pickle"),"wb"))
+  np.save(os.path.join(dir_model,"result_eval_images.npy"),out_dict)
